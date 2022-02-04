@@ -1,0 +1,89 @@
+
+- name: Download latest version of Gradle
+  get_url:
+    url: https://services.gradle.org/distributions/gradle-7.3.3-bin.zip
+    dest: ./downloads/gradle-7.3.3-bin.zip
+    #checksum: sha256:b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
+
+- name: Copy latest version of Gradle to compile machine
+  delegate_to: '{{ server_ip_final }}'
+  copy:
+    src: ./downloads/gradle-7.3.3-bin.zip
+    dest: /root/gradle-7.3.3-bin.zip
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Extract latest version of Gradle
+  delegate_to: '{{ server_ip_final }}'
+  shell: |
+    unzip -oq /root/gradle-7.3.3-bin.zip -d /root/
+
+- name: Ensure /opt/gradle folder exists
+  delegate_to: '{{ server_ip_final }}'
+  file:
+    path: /opt/gradle
+    state: directory
+    mode: '0755'
+
+- name: Move Gradle files into place
+  delegate_to: '{{ server_ip_final }}'
+  shell: |
+    cp -pr /root/gradle-*/* /opt/gradle
+
+- name: Git clone element-android repository
+  delegate_to: '{{ server_ip_final }}'
+  git:
+    repo: 'https://github.com/vector-im/element-android.git'
+    dest: /tmp/element-android/
+
+# wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
+# unzip ./commandlinetools-linux-8092744_latest.zip
+
+#root@ubuntu-compile-element:/tmp/cmdline-tools# yes | ./bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
+
+- name: Download latest version of Androids commandlinetools
+  get_url:
+    url: https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
+    dest: ./downloads/commandlinetools-linux-8092744_latest.zip
+    #checksum: sha256:b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
+
+- name: Copy latest version of Gradle to compile machine
+  delegate_to: '{{ server_ip_final }}'
+  copy:
+    src: ./downloads/commandlinetools-linux-8092744_latest.zip
+    dest: /root/commandlinetools-linux-8092744_latest.zip
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Extract latest version of Androids commandlinetools
+  delegate_to: '{{ server_ip_final }}'
+  shell: |
+    unzip -oq /root/commandlinetools-linux-8092744_latest.zip -d /root/
+
+- name: Automatically accept Googles android SDK license agreement without reading it
+  delegate_to: '{{ server_ip_final }}'
+  shell: |
+    yes | /tmp/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
+
+- name: Create environment variable for Gradle
+  delegate_to: '{{ server_ip_final }}'
+  lineinfile:
+    path: /etc/profile.d/gradle.sh
+    line: 'export PATH=/opt/gradle/bin:${PATH}'
+    create: yes
+    owner: root
+    group: root
+    mode: '0755'
+
+# THIS MIGHT NOT BE NEEDED
+
+#- name: Source magic command
+#  delegate_to: '{{ server_ip_final }}'
+#  shell: |
+#    source /etc/profile.d/gradle.sh
+
+#- name: Compile Element Android with Gradle
+#  shell: |
+#    cd /tmp/element-android && ANDROID_SDK_ROOT=/usr/lib/android-sdk gradle build

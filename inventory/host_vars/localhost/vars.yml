@@ -1,0 +1,13 @@
+
+# DigitalOcean Settings
+do_api_token: << digitalocean API token >>
+do_image_master: debian-11-x64
+do_droplet_region: "sgp1"
+slug_size: "s-8vcpu-16gb"
+
+# Server Settings
+swap_size: "8G"
+
+# SSH Settings
+public_ssh_key_file: << public SSH key location >>
+private_ssh_key_file: << private SSH key location >>

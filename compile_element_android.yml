@@ -1,0 +1,7 @@
+
+- name: "An auto-magic tool for compiling a white-labelled Element client."
+  hosts: localhost
+  gather_facts: true
+
+  roles:
+    - compile-element-android
