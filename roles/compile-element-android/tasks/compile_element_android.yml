@@ -1,6 +1,6 @@
 ---
 
-- name: Compile Element Android with Gradle
-  delegate_to: '{{ server_ip_final }}'
-  shell: |
-    ANDROID_SDK_ROOT=/usr/lib/android-sdk /opt/gradle/bin/gradle build -p /root/element-android
+#- name: Compile Element Android with Gradle
+#  delegate_to: '{{ server_ip_final }}'
+#  shell: |
+#    ANDROID_SDK_ROOT=/usr/lib/android-sdk /opt/gradle/bin/gradle build -p /root/element-android

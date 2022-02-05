@@ -1,0 +1,8 @@
+
+- name: "An auto-magic tool for compiling a white-labelled Fluffychat client."
+  hosts: localhost
+  gather_facts: true
+
+  roles:
+    - digitalocean-droplet
+    - compile-fluffychat-android

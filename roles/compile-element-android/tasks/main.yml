@@ -13,11 +13,11 @@
 
 # Setup Developer Environment
 - import_tasks: "{{ role_path }}/tasks/setup_developer_environment.yml"
-  tags: compile-android
+  tags: compile-element-android
 
 # Compile Element Android
 - import_tasks: "{{ role_path }}/tasks/compile_element_android.yml"
-  tags: compile-android
+  tags: compile-element-android
 
 # Delete DigitalOcean Droplet
 - import_tasks: "{{ role_path }}/tasks/delete_droplet.yml"

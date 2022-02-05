@@ -17,7 +17,7 @@
 - name: Set hostname for compilation machine
   delegate_to: '{{ server_ip_final }}'
   hostname:
-    name: "compile-element"
+    name: "compile-fluffychat"
     use: systemd
 
 - name: Update repositories and all packages on compilation machine
@@ -31,10 +31,12 @@
   delegate_to: '{{ server_ip_final }}'
   apt:
     pkg:
-     - unzip
-     - openjdk-11-jdk
      - git
      - ufw
+     - unzip
+     - openjdk-11-jdk
+     - ninja-build
+     - libc6-dev-i386
 
 - name: Allow all access to TCP port 22 for SSH
   delegate_to: '{{ server_ip_final }}'
@@ -92,13 +94,13 @@
   command: 'swapon /swapfile'
   when: swapfile_new.delta is defined
 
-- name: Add sysctl.conf entry to raise inotify filesystem limits
-  delegate_to: '{{ server_ip_final }}'
-  lineinfile:
-    path: /etc/sysctl.conf
-    line: 'fs.inotify.max_user_watches=524288'
+#- name: Add sysctl.conf entry to raise inotify filesystem limits
+#  delegate_to: '{{ server_ip_final }}'
+#  lineinfile:
+#    path: /etc/sysctl.conf
+#    line: 'fs.inotify.max_user_watches=524288'
 
-- name: Apply new inotify limit
-  delegate_to: '{{ server_ip_final }}'
-  command: |
-    sysctl -p
+#- name: Apply new inotify limit
+#  delegate_to: '{{ server_ip_final }}'
+#  command: |
+#    sysctl -p

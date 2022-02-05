@@ -1,0 +1,105 @@
+---
+
+- name: Ensure group "developer" exists
+  delegate_to: "{{ server_ip_final }}"
+  group:
+    name: developer
+    gid: 1000
+    state: present
+
+- name: Add the disabled user account 'developer' with a specific uid and a primary group of 'developer'
+  delegate_to: "{{ server_ip_final }}"
+  user:
+    name: developer
+    comment: Developer user account for compiling applications.
+    password: 'hunter2'
+    shell: /bin/bash
+    uid: 1000
+    group: developer
+
+#- name: Install the flutter snap package
+#  delegate_to: '{{ server_ip_final }}'
+#  command: |
+#    snap install flutter --classic
+
+#https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_2.10.0-stable.tar.xz
+
+- name: Git clone Flutter repository
+  delegate_to: '{{ server_ip_final }}'
+  git:
+    repo: 'https://github.com/flutter/flutter.git'
+    dest: /home/developer/flutter/
+    version: stable
+    force: yes
+
+- name: Change permissions on cloned flutter repository, so it's owned by developer user
+  delegate_to: '{{ server_ip_final }}'
+  command: |
+    chown -R developer:developer /home/developer/flutter/
+
+#export PATH="$PATH:`pwd`/flutter/bin"
+
+- name: Initialise flutter
+  delegate_to: '{{ server_ip_final }}'
+  command: |
+    runuser -u developer -- /home/developer/flutter/bin/flutter --version
+
+# We strongly recommend running the flutter tool without superuser privileges.
+
+#- name: Collect the flutter SDK path
+#  delegate_to: '{{ server_ip_final }}'
+#  command: |
+#    runuser -u developer -- /home/developer/flutter/bin/flutter sdk-path
+#  register: flutter_sdk_path
+
+#Optionally, pre-download development binaries:
+#The flutter tool downloads platform-specific development binaries as needed. For scenarios where pre-downloading these artifacts is preferable (for example, in hermetic build environments, or with intermittent network availability), iOS and Android binaries can be downloaded ahead of time by running:
+
+# flutter precache
+
+- name: Git clone fluffychat repository
+  delegate_to: '{{ server_ip_final }}'
+  git:
+    repo: 'https://gitlab.com/famedly/fluffychat.git'
+    dest: /home/developer/fluffychat/
+    force: yes
+
+- name: Change permissions on cloned fluffychat repository, so it's owned by developer user
+  delegate_to: '{{ server_ip_final }}'
+  command: |
+    chown -R developer:developer /home/developer/fluffychat/
+
+- name: Download latest version of Androids commandlinetools
+  get_url:
+    url: https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
+    dest: ./downloads/commandlinetools-linux-8092744_latest.zip
+    #checksum: sha256:b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
+
+- name: Copy latest version of Androids commandlinetools to compile machine
+  delegate_to: '{{ server_ip_final }}'
+  copy:
+    src: ./downloads/commandlinetools-linux-8092744_latest.zip
+    dest: /home/developer/commandlinetools-linux-8092744_latest.zip
+    owner: developer
+    group: developer
+    mode: '0644'
+
+- name: Extract latest version of Androids commandlinetools
+  delegate_to: '{{ server_ip_final }}'
+  shell: |
+    runuser -u developer -- unzip -oq /home/developer/commandlinetools-linux-8092744_latest.zip -d /home/developer/
+
+- name: Automatically accept Googles android SDK license agreement without reading it
+  delegate_to: '{{ server_ip_final }}'
+  shell: |
+    runuser -u developer -- yes | /home/developer/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
+
+- name: Install CMake package using Androids sdkmanager
+  delegate_to: '{{ server_ip_final }}'
+  shell: |
+    /home/developer/cmdline-tools/bin/sdkmanager --sdk_root=/usr/lib/android-sdk --install "cmake;3.10.2.4988404"
+
+- name: Make sure Android SDK directory is owned by developer user
+  delegate_to: '{{ server_ip_final }}'
+  command: |
+    chown -R developer:developer /usr/lib/android-sdk

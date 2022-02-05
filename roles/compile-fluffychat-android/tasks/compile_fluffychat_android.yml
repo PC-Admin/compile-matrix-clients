@@ -1,0 +1,10 @@
+---
+
+#- name: Compile Fluffychat Android with Flutter
+#  delegate_to: '{{ server_ip_final }}'
+#  shell: |
+#    runuser -u developer -- cd /home/developer/fluffychat/ && ANDROID_SDK_ROOT=/usr/lib/android-sdk /home/developer/flutter/bin/flutter build apk
+
+#developer@compile-fluffychat:~# cd /home/developer/fluffychat
+#developer@compile-fluffychat:~/fluffychat# ANDROID_SDK_ROOT=/usr/lib/android-sdk /home/developer/flutter/bin/flutter build apk
+

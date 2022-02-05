@@ -27,7 +27,7 @@
 - name: Spawn a new Digital Ocean Droplet, collect the IPv4+IPv6 addresses
   community.digitalocean.digital_ocean_droplet:
     state: present
-    name: 'compile-element-android'
+    name: 'compile-droplet'
     oauth_token: '{{ do_api_token }}'
     size: '{{ slug_size }}'
     ssh_keys: '{{ ssh_key_id_array }}'
@@ -43,5 +43,7 @@
 
 - name: Assign server IPs to variables
   set_fact:
-    server_ipv4: "{{ new_server_info.data.ip_address }}"
-    server_ipv6: "{{ new_server_info.data.ipv6_address }}"
+    server_ipv4: "{{ new_server_info.data.droplet.networks.v4[1].ip_address }}"
+    server_ipv6: "{{ new_server_info.data.droplet.networks.v6[0].ip_address }}"
+#    server_ipv4: "{{ new_server_info.data.ip_address }}"
+#    server_ipv6: "{{ new_server_info.data.ipv6_address }}"

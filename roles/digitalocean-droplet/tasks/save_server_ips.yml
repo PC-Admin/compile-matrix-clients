@@ -34,7 +34,7 @@
 
 - name: Create '.ssh/config' entry for this Compile machine on the controller
   blockinfile:
-    path: '/home/{{ ansible_user_id }}/.ssh/config'
+    path: '~/.ssh/config'
     create: yes
     block: |
       Host {{ server_ip_final }}
