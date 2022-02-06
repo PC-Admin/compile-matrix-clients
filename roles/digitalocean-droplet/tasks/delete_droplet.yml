@@ -5,11 +5,11 @@
     # needs ansible 2.8+ (AWX uses 2.9.10 at ) 
     state: absent
     id: '{{ do_droplet_id }}'
-    name: 'compile-element-android'
+    name: 'compile-droplet'
     oauth_token: '{{ do_api_token }}'
     size: '{{ slug_size }}'
     region: '{{ do_droplet_region }}'
-    image: '{{ do_image }}'
+    image: '{{ do_image_master }}'
     wait: yes
     unique_name: yes
   register: deleted_server_info

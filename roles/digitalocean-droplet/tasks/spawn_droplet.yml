@@ -45,5 +45,6 @@
   set_fact:
     server_ipv4: "{{ new_server_info.data.droplet.networks.v4[1].ip_address }}"
     server_ipv6: "{{ new_server_info.data.droplet.networks.v6[0].ip_address }}"
+    do_droplet_id: "{{ new_server_info.data.droplet.id }}"
 #    server_ipv4: "{{ new_server_info.data.ip_address }}"
 #    server_ipv6: "{{ new_server_info.data.ipv6_address }}"
