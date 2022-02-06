@@ -11,3 +11,7 @@ swap_size: "8G"
 # SSH Settings
 public_ssh_key_file: << public SSH key location >>
 private_ssh_key_file: << private SSH key location >>
+
+# Android Developer Settings
+private_keystore_file: ~/upload-keystore.jks
+private_keystore_password: << keystore password >>

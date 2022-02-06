@@ -57,18 +57,6 @@
 
 # flutter precache
 
-- name: Git clone fluffychat repository
-  delegate_to: '{{ server_ip_final }}'
-  git:
-    repo: 'https://gitlab.com/famedly/fluffychat.git'
-    dest: /home/developer/fluffychat/
-    force: yes
-
-- name: Change permissions on cloned fluffychat repository, so it's owned by developer user
-  delegate_to: '{{ server_ip_final }}'
-  command: |
-    chown -R developer:developer /home/developer/fluffychat/
-
 - name: Download latest version of Androids commandlinetools
   get_url:
     url: https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
@@ -103,3 +91,45 @@
   delegate_to: '{{ server_ip_final }}'
   command: |
     chown -R developer:developer /usr/lib/android-sdk
+
+- name: Git clone fluffychat repository
+  delegate_to: '{{ server_ip_final }}'
+  git:
+    repo: 'https://gitlab.com/famedly/fluffychat.git'
+    dest: /home/developer/fluffychat/
+    force: yes
+
+- name: Change permissions on cloned fluffychat repository, so it's owned by developer user
+  delegate_to: '{{ server_ip_final }}'
+  command: |
+    chown -R developer:developer /home/developer/fluffychat/
+
+- name: Set Android SDK version to 31 before compilation
+  delegate_to: '{{ server_ip_final }}'
+  lineinfile:
+    path: /home/developer/fluffychat/android/app/build.gradle
+    regexp: '^    compileSdkVersion '
+    line: '    compileSdkVersion 31'
+    owner: developer
+    group: developer
+    mode: '0644'
+
+- name: Copy Android Developer keystore file to compile machine
+  delegate_to: '{{ server_ip_final }}'
+  copy:
+    src: '{{ private_keystore_file }}'
+    dest: /home/developer/upload-keystore.jks
+    owner: developer
+    group: developer
+    mode: '0644'
+
+- name: Add key.properties file to the Fluffychat repository
+  delegate_to: '{{ server_ip_final }}'
+  blockinfile:
+    path: '/home/developer/fluffychat/android/key.properties'
+    create: yes
+    block: |
+      storePassword={{ private_keystore_password }}
+      keyPassword={ private_keystore_password }}
+      keyAlias=upload
+      storeFile=/home/developer/upload-keystore.jks

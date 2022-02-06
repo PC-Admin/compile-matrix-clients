@@ -5,6 +5,12 @@ Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.digitalocean`
 
+Create an upload keystore:
+```
+$ sudo apt install android-sdk
+$ keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
 Update all the variables in vars.yml.
 
 Run compile script for Android with the following tags:
