@@ -1,3 +1,21 @@
+---
+
+- name: Ensure group "developer" exists
+  delegate_to: "{{ server_ip_final }}"
+  group:
+    name: developer
+    gid: 1000
+    state: present
+
+- name: Add the disabled user account 'developer' with a specific uid and a primary group of 'developer'
+  delegate_to: "{{ server_ip_final }}"
+  user:
+    name: developer
+    comment: Developer user account for compiling applications.
+    password: 'hunter2'
+    shell: /bin/bash
+    uid: 1000
+    group: developer
 
 - name: Download latest version of Gradle
   get_url:
@@ -9,15 +27,17 @@
   delegate_to: '{{ server_ip_final }}'
   copy:
     src: ./downloads/gradle-7.3.3-bin.zip
-    dest: /root/gradle-7.3.3-bin.zip
-    owner: root
-    group: root
+    dest: /home/developer/gradle-7.3.3-bin.zip
+    owner: developer
+    group: developer
     mode: '0644'
 
 - name: Extract latest version of Gradle
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   shell: |
-    unzip -oq /root/gradle-7.3.3-bin.zip -d /root/
+    unzip -oq /home/developer/gradle-7.3.3-bin.zip -d /home/developer/
 
 - name: Ensure /opt/gradle folder exists
   delegate_to: '{{ server_ip_final }}'
@@ -29,13 +49,15 @@
 - name: Move Gradle files into place
   delegate_to: '{{ server_ip_final }}'
   shell: |
-    cp -pr /root/gradle-*/* /opt/gradle
+    cp -pr /home/developer/gradle-*/* /opt/gradle
 
 - name: Git clone element-android repository
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   git:
     repo: 'https://github.com/vector-im/element-android.git'
-    dest: /root/element-android/
+    dest: /home/developer/element-android/
 
 # wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
 # unzip ./commandlinetools-linux-8092744_latest.zip
@@ -52,20 +74,24 @@
   delegate_to: '{{ server_ip_final }}'
   copy:
     src: ./downloads/commandlinetools-linux-8092744_latest.zip
-    dest: /root/commandlinetools-linux-8092744_latest.zip
-    owner: root
-    group: root
+    dest: /home/developer/commandlinetools-linux-8092744_latest.zip
+    owner: developer
+    group: developer
     mode: '0644'
 
 - name: Extract latest version of Androids commandlinetools
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   shell: |
-    unzip -oq /root/commandlinetools-linux-8092744_latest.zip -d /root/
+    unzip -oq /home/developer/commandlinetools-linux-8092744_latest.zip -d /home/developer/
 
 - name: Automatically accept Googles android SDK license agreement without reading it
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   shell: |
-    yes | /root/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
+    yes | /home/developer/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
 
 - name: Create environment variable for Gradle
   delegate_to: '{{ server_ip_final }}'
@@ -73,17 +99,8 @@
     path: /etc/profile.d/gradle.sh
     line: 'export PATH=/opt/gradle/bin:${PATH}'
     create: yes
-    owner: root
-    group: root
+    owner: developer
+    group: developer
     mode: '0755'
 
 # THIS MIGHT NOT BE NEEDED
-
-#- name: Source magic command
-#  delegate_to: '{{ server_ip_final }}'
-#  shell: |
-#    source /etc/profile.d/gradle.sh
-
-#- name: Compile Element Android with Gradle
-#  shell: |
-#    cd /tmp/element-android && ANDROID_SDK_ROOT=/usr/lib/android-sdk gradle build

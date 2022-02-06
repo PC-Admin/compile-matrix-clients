@@ -2,5 +2,22 @@
 
 #- name: Compile Element Android with Gradle
 #  delegate_to: '{{ server_ip_final }}'
+#  become: yes
+#  become_user: developer
 #  shell: |
-#    ANDROID_SDK_ROOT=/usr/lib/android-sdk /opt/gradle/bin/gradle build -p /root/element-android
+#    ANDROID_SDK_ROOT=/usr/lib/android-sdk ./gradlew assembleGplayDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+
+
+#
+# See https://docs.gradle.org/7.3.3/userguide/command_line_interface.html#sec:command_line_warnings
+#
+# BUILD SUCCESSFUL in 12m 4s
+# 198 actionable tasks: 198 executed
+
+# Outputs at:
+
+#./vector/build/outputs/apk/gplay/debug/vector-gplay-armeabi-v7a-debug.apk
+#./vector/build/outputs/apk/gplay/debug/vector-gplay-x86_64-debug.apk
+#./vector/build/outputs/apk/gplay/debug/vector-gplay-x86-debug.apk
+#./vector/build/outputs/apk/gplay/debug/vector-gplay-arm64-v8a-debug.apk
+#./vector/build/outputs/apk/gplay/debug/vector-gplay-universal-debug.apk

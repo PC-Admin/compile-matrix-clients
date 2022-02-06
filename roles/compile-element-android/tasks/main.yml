@@ -1,11 +1,4 @@
 
-# Spawn DigitalOcean Droplet
-- import_tasks: "{{ role_path }}/tasks/spawn_droplet.yml"
-  tags: spawn-droplet
-
-# Check and Save Compile Servers IP
-- import_tasks: "{{ role_path }}/tasks/save_server_ips.yml"
-  tags: save_ips
 
 # Server Setup
 - import_tasks: "{{ role_path }}/tasks/setup_server.yml"
@@ -18,7 +11,3 @@
 # Compile Element Android
 - import_tasks: "{{ role_path }}/tasks/compile_element_android.yml"
   tags: compile-element-android
-
-# Delete DigitalOcean Droplet
-- import_tasks: "{{ role_path }}/tasks/delete_droplet.yml"
-  tags: delete-droplet

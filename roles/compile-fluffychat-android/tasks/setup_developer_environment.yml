@@ -26,23 +26,24 @@
 
 - name: Git clone Flutter repository
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   git:
     repo: 'https://github.com/flutter/flutter.git'
     dest: /home/developer/flutter/
     version: stable
     force: yes
 
-- name: Change permissions on cloned flutter repository, so it's owned by developer user
-  delegate_to: '{{ server_ip_final }}'
-  command: |
-    chown -R developer:developer /home/developer/flutter/
-
 #export PATH="$PATH:`pwd`/flutter/bin"
 
 - name: Initialise flutter
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   command: |
-    runuser -u developer -- /home/developer/flutter/bin/flutter --version
+    /home/developer/flutter/bin/flutter --version
+
+#    runuser -u developer -- /home/developer/flutter/bin/flutter --version
 
 # We strongly recommend running the flutter tool without superuser privileges.
 
@@ -74,16 +75,22 @@
 
 - name: Extract latest version of Androids commandlinetools
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   shell: |
-    runuser -u developer -- unzip -oq /home/developer/commandlinetools-linux-8092744_latest.zip -d /home/developer/
+    unzip -oq /home/developer/commandlinetools-linux-8092744_latest.zip -d /home/developer/
 
 - name: Automatically accept Googles android SDK license agreement without reading it
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   shell: |
-    runuser -u developer -- yes | /home/developer/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
+    yes | /home/developer/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
 
 - name: Install CMake package using Androids sdkmanager
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   shell: |
     /home/developer/cmdline-tools/bin/sdkmanager --sdk_root=/usr/lib/android-sdk --install "cmake;3.10.2.4988404"
 
@@ -94,15 +101,12 @@
 
 - name: Git clone fluffychat repository
   delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
   git:
     repo: 'https://gitlab.com/famedly/fluffychat.git'
     dest: /home/developer/fluffychat/
     force: yes
-
-- name: Change permissions on cloned fluffychat repository, so it's owned by developer user
-  delegate_to: '{{ server_ip_final }}'
-  command: |
-    chown -R developer:developer /home/developer/fluffychat/
 
 - name: Set Android SDK version to 31 before compilation
   delegate_to: '{{ server_ip_final }}'
@@ -130,6 +134,6 @@
     create: yes
     block: |
       storePassword={{ private_keystore_password }}
-      keyPassword={ private_keystore_password }}
+      #keyPassword={ private_keystore_password }}
       keyAlias=upload
       storeFile=/home/developer/upload-keystore.jks
