@@ -56,7 +56,7 @@
   become: yes
   become_user: developer
   git:
-    repo: 'https://github.com/vector-im/element-android.git'
+    repo: '{{ element_android_repo }}'
     dest: /home/developer/element-android/
 
 # wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip

@@ -104,7 +104,7 @@
   become: yes
   become_user: developer
   git:
-    repo: 'https://gitlab.com/famedly/fluffychat.git'
+    repo: '{{ fluffychat_repo }}'
     dest: /home/developer/fluffychat/
     force: yes
 
@@ -134,6 +134,6 @@
     create: yes
     block: |
       storePassword={{ private_keystore_password }}
-      #keyPassword={ private_keystore_password }}
+      keyPassword={ private_keystore_password }}
       keyAlias=upload
       storeFile=/home/developer/upload-keystore.jks
