@@ -91,7 +91,7 @@
   become: yes
   become_user: developer
   shell: |
-    yes | /home/developer/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
+    yes | /home/developer/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/home/developer/android-sdk
 
 - name: Create environment variable for Gradle
   delegate_to: '{{ server_ip_final }}'

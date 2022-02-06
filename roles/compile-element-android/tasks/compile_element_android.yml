@@ -5,7 +5,7 @@
   become: yes
   become_user: developer
   shell:
-    cmd: ANDROID_SDK_ROOT=/usr/lib/android-sdk ./gradlew assembleGplayDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleGplayDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
   async: 1200
   poll: 15
