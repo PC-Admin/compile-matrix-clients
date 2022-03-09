@@ -41,10 +41,21 @@
 - debug:
     msg: "{{ new_server_info }}"
 
-- name: Assign server IPs to variables
+- name: Assign DigitalOcean droplet ID to a variable
+  set_fact:
+    do_droplet_id: "{{ new_server_info.data.droplet.id }}"
+
+- name: Assign server IPv4 to a variable
+  set_fact:
+    server_ipv4: "{{ new_server_info.data.droplet.networks.v4[0].ip_address }}"
+  when: new_server_info.data.droplet.networks.v4[0].type == "public"
+
+- name: Assign server IPv4 to a variable
   set_fact:
     server_ipv4: "{{ new_server_info.data.droplet.networks.v4[1].ip_address }}"
+  when: new_server_info.data.droplet.networks.v4[1].type == "public"
+
+- name: Assign server IPv6 to a variable
+  set_fact:
     server_ipv6: "{{ new_server_info.data.droplet.networks.v6[0].ip_address }}"
-    do_droplet_id: "{{ new_server_info.data.droplet.id }}"
-#    server_ipv4: "{{ new_server_info.data.ip_address }}"
-#    server_ipv6: "{{ new_server_info.data.ipv6_address }}"
+  when: new_server_info.data.droplet.networks.v6[0].type == "public"
