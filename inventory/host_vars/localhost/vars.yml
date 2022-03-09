@@ -19,3 +19,13 @@ private_keystore_password: << keystore password >>
 # Software Repositories
 element_android_repo: 'https://github.com/vector-im/element-android.git'
 fluffychat_repo: 'https://gitlab.com/famedly/fluffychat.git'
+
+# Clone mode, either 'git' or 'rsync'
+clone_mode: rsync
+
+# Git Repositories
+element_android_repo: 'https://github.com/vector-im/element-android.git'
+fluffychat_repo: 'https://gitlab.com/famedly/fluffychat.git'
+
+# Local Copies
+local_element_android_repo_location: '/home/username/Documents/element-android/'

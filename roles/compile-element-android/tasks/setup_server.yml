@@ -35,6 +35,7 @@
      - openjdk-11-jdk
      - git
      - ufw
+     - rsync
 
 - name: Allow all access to TCP port 22 for SSH
   delegate_to: '{{ server_ip_final }}'

@@ -51,6 +51,12 @@
   shell: |
     cp -pr /home/developer/gradle-*/* /opt/gradle
 
+- name: Remove any previous copies of element-android
+  delegate_to: '{{ server_ip_final }}'
+  file:
+    state: absent
+    path: /home/developer/element-android/
+
 - name: Git clone element-android repository
   delegate_to: '{{ server_ip_final }}'
   become: yes
@@ -58,6 +64,22 @@
   git:
     repo: '{{ element_android_repo }}'
     dest: /home/developer/element-android/
+  when: clone_mode is search("git")
+
+- name: Copy local element-android repository
+  shell: |
+    rsync -av {{ local_element_android_repo_location }} {{ server_ip_final }}:/home/developer/element-android/
+  when: clone_mode is search("rsync")
+
+- name: Change permissions on element-android repository
+  delegate_to: '{{ server_ip_final }}'
+  file:
+    path: /home/developer/element-android/
+    owner: developer
+    group: developer
+    recurse: yes
+  when: clone_mode is search("rsync")
+
 
 # wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
 # unzip ./commandlinetools-linux-8092744_latest.zip
