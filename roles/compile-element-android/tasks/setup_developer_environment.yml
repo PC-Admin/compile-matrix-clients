@@ -12,7 +12,6 @@
   user:
     name: developer
     comment: Developer user account for compiling applications.
-    password: 'hunter2'
     shell: /bin/bash
     uid: 1000
     group: developer
@@ -21,7 +20,7 @@
   get_url:
     url: https://services.gradle.org/distributions/gradle-7.3.3-bin.zip
     dest: ./downloads/gradle-7.3.3-bin.zip
-    #checksum: sha256:b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
+    checksum: sha256:b586e04868a22fd817c8971330fec37e298f3242eb85c374181b12d637f80302
 
 - name: Copy latest version of Gradle to compile machine
   delegate_to: '{{ server_ip_final }}'
@@ -66,7 +65,7 @@
     dest: /home/developer/element-android/
   when: clone_mode is search("git")
 
-- name: Copy local element-android repository
+- name: Rsync local element-android repository
   shell: |
     rsync -av {{ local_element_android_repo_location }} {{ server_ip_final }}:/home/developer/element-android/
   when: clone_mode is search("rsync")
@@ -90,7 +89,7 @@
   get_url:
     url: https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
     dest: ./downloads/commandlinetools-linux-8092744_latest.zip
-    #checksum: sha256:b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
+    checksum: sha256:d71f75333d79c9c6ef5c39d3456c6c58c613de30e6a751ea0dbd433e8f8b9cbf
 
 - name: Copy latest version of Gradle to compile machine
   delegate_to: '{{ server_ip_final }}'
