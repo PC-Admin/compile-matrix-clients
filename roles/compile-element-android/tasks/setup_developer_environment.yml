@@ -55,6 +55,7 @@
   file:
     state: absent
     path: /home/developer/element-android/
+  when: clone_mode is search("git")
 
 - name: Git clone element-android repository
   delegate_to: '{{ server_ip_final }}'
