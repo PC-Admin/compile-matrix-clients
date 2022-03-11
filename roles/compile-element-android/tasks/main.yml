@@ -2,12 +2,15 @@
 
 # Server Setup
 - import_tasks: "{{ role_path }}/tasks/setup_server.yml"
-  tags: setup-server
+  tags:
+    - setup-server
 
 # Setup Developer Environment
 - import_tasks: "{{ role_path }}/tasks/setup_developer_environment.yml"
-  tags: compile-element-android
+  tags:
+    - compile-element-android
 
 # Compile Element Android
 - import_tasks: "{{ role_path }}/tasks/compile_element_android.yml"
-  tags: compile-element-android
+  tags:
+    - compile-element-android
