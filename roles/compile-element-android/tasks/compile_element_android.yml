@@ -1,33 +1,118 @@
 ---
 
-- name: Compile Element Android with Gradle (Can take up to 20mins!)
+- name: Remove any previous copies of element-android
+  delegate_to: '{{ server_ip_final }}'
+  file:
+    state: absent
+    path: /home/developer/element-android/
+  when: clone_mode is search("git")
+
+- name: Git clone element-android repository
+  delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
+  git:
+    repo: '{{ element_android_repo }}'
+    dest: /home/developer/element-android/
+  when: clone_mode is search("git")
+
+- name: Rsync local element-android repository
+  shell: |
+    rsync -av {{ local_element_android_repo_location }} {{ server_ip_final }}:/home/developer/element-android/
+  when: clone_mode is search("rsync")
+
+- name: Change permissions on element-android repository
+  delegate_to: '{{ server_ip_final }}'
+  file:
+    path: /home/developer/element-android/
+    owner: developer
+    group: developer
+    recurse: yes
+  when: clone_mode is search("rsync")
+
+- name: Compile Element-Android Gplay (debug) with Gradle (Can take up to 30mins!)
   delegate_to: '{{ server_ip_final }}'
   become: yes
   become_user: developer
   shell:
     cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleGplayDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
-  async: 1200
+  async: 1800
   poll: 15
+  when: ( build_mode is search("debug") ) and ( build_gplay | bool )
 
-#
-# See https://docs.gradle.org/7.3.3/userguide/command_line_interface.html#sec:command_line_warnings
-#
-# BUILD SUCCESSFUL in 12m 4s
-# 198 actionable tasks: 198 executed
+# Debug Gplay build
+# ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleGplayDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
 
 # Outputs at:
-
 #./vector/build/outputs/apk/gplay/debug/vector-gplay-armeabi-v7a-debug.apk
 #./vector/build/outputs/apk/gplay/debug/vector-gplay-x86_64-debug.apk
 #./vector/build/outputs/apk/gplay/debug/vector-gplay-x86-debug.apk
 #./vector/build/outputs/apk/gplay/debug/vector-gplay-arm64-v8a-debug.apk
 #./vector/build/outputs/apk/gplay/debug/vector-gplay-universal-debug.apk
 
+- name: Compile Element-Android Gplay (release) with Gradle (Can take up to 30mins!)
+  delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
+  shell:
+    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    chdir: /home/developer/element-android/
+  async: 1800
+  poll: 15
+  when: ( build_mode is search("release") ) and ( build_gplay | bool )
 
-# print these fullpaths into a list
+# Release Gplay build
+# ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
 
-# developer@compile-element:~/element-android$ find ./ -name *.apk
+# Outputs at:
+#./vector/build/outputs/apk/gplay/release/vector-gplay-armeabi-v7a-release-unsigned.apk
+#./vector/build/outputs/apk/gplay/release/vector-gplay-x86_64-release-unsigned.apk
+#./vector/build/outputs/apk/gplay/release/vector-gplay-universal-release-unsigned.apk
+#./vector/build/outputs/apk/gplay/release/vector-gplay-x86-release-unsigned.apk
+#./vector/build/outputs/apk/gplay/release/vector-gplay-arm64-v8a-release-unsigned.apk
+
+- name: Compile Element-Android FDroid (debug) with Gradle (Can take up to 30mins!)
+  delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
+  shell:
+    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleFdroidDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    chdir: /home/developer/element-android/
+  async: 1800
+  poll: 15
+  when: ( build_mode is search("debug") ) and ( build_fdroid | bool )
+
+# Debug Fdroid build
+# ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleFdroidDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+
+# Outputs at:
+#./vector/build/outputs/apk/fdroid/debug/vector-fdroid-armeabi-v7a-debug.apk
+#./vector/build/outputs/apk/fdroid/debug/vector-fdroid-x86_64-debug.apk
+#./vector/build/outputs/apk/fdroid/debug/vector-fdroid-x86-debug.apk
+#./vector/build/outputs/apk/fdroid/debug/vector-fdroid-universal-debug.apk
+#./vector/build/outputs/apk/fdroid/debug/vector-fdroid-arm64-v8a-debug.apk
+
+- name: Compile Element-Android FDroid (release) with Gradle (Can take up to 30mins!)
+  delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
+  shell:
+    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleFdroid -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    chdir: /home/developer/element-android/
+  async: 1800
+  poll: 15
+  when: ( build_mode is search("release") ) and ( build_fdroid | bool )
+
+# Release Fdroid build
+# ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleFdroid -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+
+# Outputs at:
+#./vector/build/outputs/apk/fdroid/release/vector-fdroid-universal-release-unsigned.apk
+#./vector/build/outputs/apk/fdroid/release/vector-fdroid-armeabi-v7a-release-unsigned.apk
+#./vector/build/outputs/apk/fdroid/release/vector-fdroid-x86-release-unsigned.apk
+#./vector/build/outputs/apk/fdroid/release/vector-fdroid-arm64-v8a-release-unsigned.apk
+#./vector/build/outputs/apk/fdroid/release/vector-fdroid-x86_64-release-unsigned.apk
 
 - name: Collect list of generated .apk files
   delegate_to: '{{ server_ip_final }}'
@@ -36,8 +121,6 @@
   shell: |
     find /home/developer/element-android/ -name *.apk
   register: apk_files
-
-# fetch one by one
 
 - name: Fetch .apk outputs of compilation
   delegate_to: '{{ server_ip_final }}'

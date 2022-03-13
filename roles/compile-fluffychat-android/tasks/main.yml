@@ -1,15 +1,27 @@
 
 # Server Setup
-- import_tasks: "{{ role_path }}/tasks/setup_server.yml"
+- include_tasks:
+    file: "{{ role_path }}/tasks/setup_server.yml"
+    apply:
+      tags:
+        - setup-server
   tags:
     - setup-server
 
 # Setup Developer Environment
-- import_tasks: "{{ role_path }}/tasks/setup_developer_environment.yml"
+- include_tasks:
+    file: "{{ role_path }}/tasks/setup_developer_environment.yml"
+    apply:
+      tags:
+        - compile-fluffychat-android
   tags:
     - compile-fluffychat-android
 
 # Compile FluffyChat Android
-- import_tasks: "{{ role_path }}/tasks/compile_fluffychat_android.yml"
+- include_tasks:
+    file: "{{ role_path }}/tasks/compile_fluffychat_android.yml"
+    apply:
+      tags:
+        - compile-fluffychat-android
   tags:
     - compile-fluffychat-android

@@ -1,15 +1,27 @@
 
 # Spawn DigitalOcean Droplet
-- import_tasks: "{{ role_path }}/tasks/spawn_droplet.yml"
+- include_tasks:
+    file: "{{ role_path }}/tasks/spawn_droplet.yml"
+    apply:
+      tags:
+        - spawn-droplet
   tags:
     - spawn-droplet
 
 # Check and Save Compile Servers IP
-- import_tasks: "{{ role_path }}/tasks/save_server_ips.yml"
+- include_tasks:
+    file: "{{ role_path }}/tasks/save_server_ips.yml"
+    apply:
+      tags:
+        - save_ips
   tags:
     - save_ips
 
 # Delete DigitalOcean Droplet
-- import_tasks: "{{ role_path }}/tasks/delete_droplet.yml"
+- include_tasks:
+    file: "{{ role_path }}/tasks/delete_droplet.yml"
+    apply:
+      tags:
+        - delete-droplet
   tags:
     - delete-droplet
