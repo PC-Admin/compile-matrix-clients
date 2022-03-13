@@ -16,83 +16,13 @@
     uid: 1000
     group: developer
 
-- name: Download latest version of Gradle
-  get_url:
-    url: https://services.gradle.org/distributions/gradle-7.3.3-bin.zip
-    dest: ./downloads/gradle-7.3.3-bin.zip
-    checksum: sha256:b586e04868a22fd817c8971330fec37e298f3242eb85c374181b12d637f80302
-
-- name: Copy latest version of Gradle to compile machine
-  delegate_to: '{{ server_ip_final }}'
-  copy:
-    src: ./downloads/gradle-7.3.3-bin.zip
-    dest: /home/developer/gradle-7.3.3-bin.zip
-    owner: developer
-    group: developer
-    mode: '0644'
-
-- name: Extract latest version of Gradle
-  delegate_to: '{{ server_ip_final }}'
-  become: yes
-  become_user: developer
-  shell: |
-    unzip -oq /home/developer/gradle-7.3.3-bin.zip -d /home/developer/
-
-- name: Ensure /opt/gradle folder exists
-  delegate_to: '{{ server_ip_final }}'
-  file:
-    path: /opt/gradle
-    state: directory
-    mode: '0755'
-
-- name: Move Gradle files into place
-  delegate_to: '{{ server_ip_final }}'
-  shell: |
-    cp -pr /home/developer/gradle-*/* /opt/gradle
-
-- name: Remove any previous copies of element-android
-  delegate_to: '{{ server_ip_final }}'
-  file:
-    state: absent
-    path: /home/developer/element-android/
-  when: clone_mode is search("git")
-
-- name: Git clone element-android repository
-  delegate_to: '{{ server_ip_final }}'
-  become: yes
-  become_user: developer
-  git:
-    repo: '{{ element_android_repo }}'
-    dest: /home/developer/element-android/
-  when: clone_mode is search("git")
-
-- name: Rsync local element-android repository
-  shell: |
-    rsync -av {{ local_element_android_repo_location }} {{ server_ip_final }}:/home/developer/element-android/
-  when: clone_mode is search("rsync")
-
-- name: Change permissions on element-android repository
-  delegate_to: '{{ server_ip_final }}'
-  file:
-    path: /home/developer/element-android/
-    owner: developer
-    group: developer
-    recurse: yes
-  when: clone_mode is search("rsync")
-
-
-# wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
-# unzip ./commandlinetools-linux-8092744_latest.zip
-
-#root@ubuntu-compile-element:/tmp/cmdline-tools# yes | ./bin/sdkmanager --licenses --sdk_root=/usr/lib/android-sdk
-
 - name: Download latest version of Androids commandlinetools
   get_url:
     url: https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
     dest: ./downloads/commandlinetools-linux-8092744_latest.zip
     checksum: sha256:d71f75333d79c9c6ef5c39d3456c6c58c613de30e6a751ea0dbd433e8f8b9cbf
 
-- name: Copy latest version of Gradle to compile machine
+- name: Copy latest version of Androids commandlinetools to compile machine
   delegate_to: '{{ server_ip_final }}'
   copy:
     src: ./downloads/commandlinetools-linux-8092744_latest.zip
@@ -114,15 +44,3 @@
   become_user: developer
   shell: |
     yes | /home/developer/cmdline-tools/bin/sdkmanager --licenses --sdk_root=/home/developer/android-sdk
-
-- name: Create environment variable for Gradle
-  delegate_to: '{{ server_ip_final }}'
-  lineinfile:
-    path: /etc/profile.d/gradle.sh
-    line: 'export PATH=/opt/gradle/bin:${PATH}'
-    create: yes
-    owner: developer
-    group: developer
-    mode: '0755'
-
-# THIS MIGHT NOT BE NEEDED
