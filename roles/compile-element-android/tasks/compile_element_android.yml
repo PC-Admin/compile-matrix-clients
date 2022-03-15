@@ -51,14 +51,14 @@
 #./vector/build/outputs/apk/gplay/debug/vector-gplay-arm64-v8a-debug.apk
 #./vector/build/outputs/apk/gplay/debug/vector-gplay-universal-debug.apk
 
-- name: Compile Element-Android Gplay (release) with Gradle (Can take up to 30mins!)
+- name: Compile Element-Android Gplay (release) with Gradle (Can take up to 45mins!)
   delegate_to: '{{ server_ip_final }}'
   become: yes
   become_user: developer
   shell:
     cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
-  async: 1800
+  async: 2700
   poll: 15
   when: ( build_mode is search("release") ) and ( build_gplay | bool )
 
@@ -93,14 +93,14 @@
 #./vector/build/outputs/apk/fdroid/debug/vector-fdroid-universal-debug.apk
 #./vector/build/outputs/apk/fdroid/debug/vector-fdroid-arm64-v8a-debug.apk
 
-- name: Compile Element-Android FDroid (release) with Gradle (Can take up to 30mins!)
+- name: Compile Element-Android FDroid (release) with Gradle (Can take up to 45mins!)
   delegate_to: '{{ server_ip_final }}'
   become: yes
   become_user: developer
   shell:
     cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleFdroid -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
-  async: 1800
+  async: 2700
   poll: 15
   when: ( build_mode is search("release") ) and ( build_fdroid | bool )
 
