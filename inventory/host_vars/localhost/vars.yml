@@ -23,7 +23,7 @@ element_android_repo: 'https://github.com/vector-im/element-android.git'
 fluffychat_repo: 'https://gitlab.com/famedly/fluffychat.git'
 
 # Clone mode, either 'git' or 'rsync'
-clone_mode: rsyncd
+clone_mode: rsync
 
 # Build Mode ('release' or 'debug')
 build_mode: 'debug'
