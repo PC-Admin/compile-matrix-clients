@@ -13,15 +13,17 @@ public_ssh_key_file: << public SSH key location >>
 private_ssh_key_file: << private SSH key location >>
 
 # Android Developer Settings
-private_keystore_file: ~/upload-keystore.jks
-private_keystore_password: << keystore password >>
+sign_packages: false
+private_keystore_alias: << Android signing key alias >>
+private_keystore_file: << Android signing key location >>
+private_keystore_password: << Android signing key password >>
 
 # Software Repositories
 element_android_repo: 'https://github.com/vector-im/element-android.git'
 fluffychat_repo: 'https://gitlab.com/famedly/fluffychat.git'
 
 # Clone mode, either 'git' or 'rsync'
-clone_mode: rsync
+clone_mode: rsyncd
 
 # Build Mode ('release' or 'debug')
 build_mode: 'debug'

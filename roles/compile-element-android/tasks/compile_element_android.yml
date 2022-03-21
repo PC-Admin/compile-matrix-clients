@@ -30,6 +30,70 @@
     recurse: yes
   when: clone_mode is search("rsync")
 
+- set_fact:
+    slash: '\'
+  when: sign_packages | bool
+
+- name: Copy Android signing key to compile machine
+  delegate_to: '{{ server_ip_final }}'
+  copy:
+    src: '{{ private_keystore_file }}'
+    dest: '/home/developer/element-android/vector/'
+    owner: developer
+    group: developer
+    mode: '0600'
+  when: sign_packages | bool
+
+- name: Replace keyAlias value in build.gradle
+  delegate_to: '{{ server_ip_final }}'
+  replace:
+    path: '/home/developer/element-android/vector/build.gradle'
+    regexp: '            keyAlias project.property\(\"signing.element.keyId\"\)$'
+    replace: "            keyAlias '{{ private_keystore_alias }}'"
+  when: sign_packages | bool
+
+- name: Replace keyPassword value in build.gradle
+  delegate_to: '{{ server_ip_final }}'
+  replace:
+    path: '/home/developer/element-android/vector/build.gradle'
+    regexp: '            keyPassword project.property\(\"signing.element.keyPassword\"\)$'
+    replace: "            keyPassword '{{ private_keystore_password }}'"
+  when: sign_packages | bool
+
+- name: Replace storeFile value in build.gradle
+  delegate_to: '{{ server_ip_final }}'
+  replace:
+    path: '/home/developer/element-android/vector/build.gradle'
+    regexp: '            storeFile file\(project.property\("signing.element.storePath"\)\)$'
+    replace: "            storeFile file('./{{ private_keystore_file | basename }}')"
+  when: sign_packages | bool
+
+- name: Replace storePassword value in build.gradle
+  delegate_to: '{{ server_ip_final }}'
+  replace:
+    path: '/home/developer/element-android/vector/build.gradle'
+    regexp: '            storePassword project.property\("signing.element.storePassword"\)$'
+    replace: "            storePassword '{{ private_keystore_password }}'"
+  when: sign_packages | bool
+
+- name: Allow signing of release version in build.gradle
+  delegate_to: '{{ server_ip_final }}'
+  replace:
+    path: '/home/developer/element-android/vector/build.gradle'
+    after: '        release {'
+    regexp: '            \/\/ signingConfig signingConfigs.release$'
+    replace: '            signingConfig signingConfigs.release'
+  when: sign_packages | bool
+
+- name: Disallow signing of debug version in build.gradle
+  delegate_to: '{{ server_ip_final }}'
+  replace:
+    path: '/home/developer/element-android/vector/build.gradle'
+    before: '        release {'
+    regexp: '            signingConfig signingConfigs.debug'
+    replace: '            // signingConfig signingConfigs.debug$'
+  when: sign_packages | bool
+
 - name: Compile Element-Android Gplay (debug) with Gradle (Can take up to 30mins!)
   delegate_to: '{{ server_ip_final }}'
   become: yes

@@ -5,6 +5,8 @@ Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.digitalocean`
 
+For application signing generate a signing key: https://developer.android.com/studio/build/building-cmdline#sign_manually
+
 Update all the variables in vars.yml.
 
 Run compile script for Android with the following tags:
