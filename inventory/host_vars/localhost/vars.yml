@@ -25,7 +25,7 @@ fluffychat_repo: 'https://gitlab.com/famedly/fluffychat.git'
 # Clone mode, either 'git' or 'rsync'
 clone_mode: rsync
 
-# Build Mode ('release' or 'debug')
+# Build Mode ('debug' or 'release' or 'bundle')
 build_mode: 'debug'
 
 # Build Types

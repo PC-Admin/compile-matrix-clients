@@ -94,6 +94,8 @@
     replace: '            // signingConfig signingConfigs.debug$'
   when: sign_packages | bool
 
+- debug: msg="Time before compilation starts {{ ansible_date_time.time }}"
+
 - name: Compile Element-Android Gplay (debug) with Gradle (Can take up to 30mins!)
   delegate_to: '{{ server_ip_final }}'
   become: yes
@@ -178,15 +180,46 @@
 #./vector/build/outputs/apk/fdroid/release/vector-fdroid-arm64-v8a-release-unsigned.apk
 #./vector/build/outputs/apk/fdroid/release/vector-fdroid-x86_64-release-unsigned.apk
 
+- name: Compile Element-Android Gplay (bundle) with Gradle (Can take up to 60mins!)
+  delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
+  shell:
+    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew bundleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    chdir: /home/developer/element-android/
+  async: 3600
+  poll: 15
+  when: ( build_mode is search("bundle") ) and ( build_gplay | bool )
+
+# Bundle Gplay build
+# ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew bundleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+
+# Outputs at:
+#./vector/build/outputs/bundle/gplayRelease/vector-gplay-release.aab
+#./vector/build/outputs/bundle/gplayDebug/vector-gplay-debug.aab
+#./vector/build/intermediates/intermediary_bundle/gplayRelease/packageGplayReleaseBundle/intermediary-bundle.aab
+#./vector/build/intermediates/intermediary_bundle/gplayRelease/shrinkBundleGplayReleaseResources/intermediary-bundle.aab
+#./vector/build/intermediates/intermediary_bundle/gplayDebug/intermediary-bundle.aab
+
 - name: Collect list of generated .apk files
   delegate_to: '{{ server_ip_final }}'
   become: yes
   become_user: developer
   shell: |
     find /home/developer/element-android/ -name *.apk
-  register: apk_files
+  register: output_files
+  when: ( build_mode is search("release") ) or ( build_mode is search("debug") )
 
-- name: Fetch .apk outputs of compilation
+- name: Collect list of generated .aab files
+  delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
+  shell: |
+    find /home/developer/element-android/ -name *.aab
+  register: output_files
+  when: ( build_mode is search("bundle") )
+
+- name: Fetch .apk/.aab outputs of compilation
   delegate_to: '{{ server_ip_final }}'
   become: yes
   become_user: developer
@@ -194,4 +227,4 @@
     src: '{{ item }}'
     dest: ./outputs/
     flat: yes
-  with_items: '{{ apk_files.stdout_lines }}'
+  with_items: '{{ output_files.stdout_lines }}'
