@@ -207,7 +207,7 @@
   become_user: developer
   shell: |
     find /home/developer/element-android/ -name *.apk
-  register: output_files
+  register: apk_files
   when: ( build_mode is search("release") ) or ( build_mode is search("debug") )
 
 - name: Collect list of generated .aab files
@@ -216,10 +216,10 @@
   become_user: developer
   shell: |
     find /home/developer/element-android/ -name *.aab
-  register: output_files
+  register: aab_files
   when: ( build_mode is search("bundle") )
 
-- name: Fetch .apk/.aab outputs of compilation
+- name: Fetch .apk outputs of compilation
   delegate_to: '{{ server_ip_final }}'
   become: yes
   become_user: developer
@@ -227,4 +227,16 @@
     src: '{{ item }}'
     dest: ./outputs/
     flat: yes
-  with_items: '{{ output_files.stdout_lines }}'
+  with_items: '{{ apk_files.stdout_lines }}'
+  when: ( build_mode is search("release") ) or ( build_mode is search("debug") )
+
+- name: Fetch .aab outputs of compilation
+  delegate_to: '{{ server_ip_final }}'
+  become: yes
+  become_user: developer
+  fetch:
+    src: '{{ item }}'
+    dest: ./outputs/
+    flat: yes
+  with_items: '{{ aab_files.stdout_lines }}'
+  when: ( build_mode is search("bundle") )

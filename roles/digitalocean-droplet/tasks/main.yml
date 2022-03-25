@@ -13,9 +13,9 @@
     file: "{{ role_path }}/tasks/save_server_ips.yml"
     apply:
       tags:
-        - save_ips
+        - save-ips
   tags:
-    - save_ips
+    - save-ips
 
 # Delete DigitalOcean Droplet
 - include_tasks:
