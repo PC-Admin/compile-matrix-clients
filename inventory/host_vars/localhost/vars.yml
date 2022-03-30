@@ -39,5 +39,12 @@ fluffychat_repo: 'https://gitlab.com/famedly/fluffychat.git'
 # Local Copies
 local_element_android_repo_location: '/home/username/Documents/element-android/'
 
+# Application name (replaces 'vector' in the output file names)
+app_name: 'vector'
+
+# Webserver settings (for FDroid uploads)
+fdroid_download_server: 'matrix.example.org'
+fdroid_download_location: '/matrix/nginx-proxy/data/matrix-domain/'
+
 # Droplet/Server IP
 #server_ip_final: 192.168.1.10

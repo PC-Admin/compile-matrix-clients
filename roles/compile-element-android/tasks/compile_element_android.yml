@@ -240,3 +240,7 @@
     flat: yes
   with_items: '{{ aab_files.stdout_lines }}'
   when: ( build_mode is search("bundle") )
+
+- name: Rename all .apk/.aab files to the application name
+  shell: |
+    rename -d 's/vector/{{ app_name }}/' ./outputs/*

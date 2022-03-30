@@ -1,0 +1,9 @@
+---
+
+- name: Copy each FDroid release file over to the upload server
+  delegate_to: '{{ fdroid_download_server }}'
+  copy:
+    src: "{{ item }}"
+    dest: "{{ fdroid_download_location }}"
+  with_fileglob:
+    - "./outputs/{{ app_name }}*release.apk"

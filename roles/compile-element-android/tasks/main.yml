@@ -26,3 +26,12 @@
         - compile-element-android
   tags:
     - compile-element-android
+
+# Upload FDroid release to website
+- include_tasks:
+    file: "{{ role_path }}/tasks/upload_fdroid_release.yml"
+    apply:
+      tags:
+        - upload-fdroid-release
+  tags:
+    - upload-fdroid-release
