@@ -26,16 +26,25 @@
     name: "*"
     update_cache: yes
     state: latest
+  register: package_status
+  until: package_status is success
+  delay: 6
+  retries: 10
 
 - name: Install necessary utils on compilation machine
   delegate_to: '{{ server_ip_final }}'
   apt:
     pkg:
+     - sudo
      - unzip
      - openjdk-11-jdk
      - git
      - ufw
      - rsync
+  register: package_status
+  until: package_status is success
+  delay: 6
+  retries: 10
 
 - name: Allow all access to TCP port 22 for SSH
   delegate_to: '{{ server_ip_final }}'

@@ -4,7 +4,7 @@
   delegate_to: "{{ server_ip_final }}"
   group:
     name: developer
-    gid: 1000
+    gid: 1001
     state: present
 
 - name: Add the disabled user account 'developer' with a specific uid and a primary group of 'developer'
@@ -13,20 +13,20 @@
     name: developer
     comment: Developer user account for compiling applications.
     shell: /bin/bash
-    uid: 1000
+    uid: 1001
     group: developer
 
 - name: Download latest version of Androids commandlinetools
   get_url:
-    url: https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
-    dest: ./downloads/commandlinetools-linux-8092744_latest.zip
-    checksum: sha256:d71f75333d79c9c6ef5c39d3456c6c58c613de30e6a751ea0dbd433e8f8b9cbf
+    url: https://dl.google.com/android/repository/commandlinetools-linux-9123335_latest.zip
+    dest: ./downloads/commandlinetools-linux-9123335_latest.zip
+    checksum: sha256:0bebf59339eaa534f4217f8aa0972d14dc49e7207be225511073c661ae01da0a
 
 - name: Copy latest version of Androids commandlinetools to compile machine
   delegate_to: '{{ server_ip_final }}'
   copy:
-    src: ./downloads/commandlinetools-linux-8092744_latest.zip
-    dest: /home/developer/commandlinetools-linux-8092744_latest.zip
+    src: ./downloads/commandlinetools-linux-9123335_latest.zip
+    dest: /home/developer/commandlinetools-linux-9123335_latest.zip
     owner: developer
     group: developer
     mode: '0644'
@@ -36,7 +36,7 @@
   become: yes
   become_user: developer
   shell: |
-    unzip -oq /home/developer/commandlinetools-linux-8092744_latest.zip -d /home/developer/
+    unzip -oq /home/developer/commandlinetools-linux-9123335_latest.zip -d /home/developer/
 
 - name: Automatically accept Googles android SDK license agreement without reading it
   delegate_to: '{{ server_ip_final }}'

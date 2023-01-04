@@ -1,30 +1,36 @@
 
 # Compile Element Android
 
-Install prerequisite packages for ansible on the controller:
+1) Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.digitalocean`
 
-Install the prerequisite Linux package on the controller:
+2) Install the prerequisite Linux package on the controller:
 
 `sudo apt install rename`
 
-For application signing generate a signing key: https://developer.android.com/studio/build/building-cmdline#sign_manually
+3) For application signing generate a signing key: https://developer.android.com/studio/build/building-cmdline#sign_manually
 
-Update all the variables in vars.yml.
+4) Update all the variables in ./inventory/host_vars/hostname/vars.yml.
 
-Run compile script for Android with the following tags:
+5A) Run compile script for Android with the following tags (also generating a DigitalOcean droplet):
 
 `$ ansible-playbook -v -i ./inventory/hosts -t "spawn-droplet,save-ips,setup-server,compile-element-android" compile_element_android.yml`
 
-Add the droplet IP to `server_ip_final` in vars.yml to skip re-creating the droplet:
+OR
+
+B) Run compile script for Android with the following tags (on your own hardware):
+
+`$ ansible-playbook -v -i ./inventory/hosts -t "save-ips,setup-server,compile-element-android" compile_element_android.yml`
+
+6) Add the droplet IP to `server_ip_final` in vars.yml to skip re-creating the droplet:
 
 `$ ansible-playbook -v -i ./inventory/hosts -t "compile-element-android" compile_element_android.yml`
 
-After be sure to re-run the playbook with the 'delete-droplet' tag to cleanup:
+7) After be sure to re-run the playbook with the 'delete-droplet' tag to cleanup:
 
 `$ ansible-playbook -v -i ./inventory/hosts -t "spawn-droplet,delete-droplet" compile_element_android.yml`
 
-To upload the release files to a webserver use:
+8) To upload the release files to a webserver use:
 
 `$ ansible-playbook -v -i ./inventory/hosts -t "upload-fdroid-release" compile_element_android.yml`
