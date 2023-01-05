@@ -18,6 +18,10 @@ private_keystore_alias: << Android signing key alias >>
 private_keystore_file: << Android signing key location >>
 private_keystore_password: << Android signing key password >>
 
+nightly_keystore_alias: << Android nightly signing key alias >>
+nightly_keystore_file: << Android nightly signing key location >>
+nightly_keystore_password: << Android nightly signing key password >>
+
 # Software Repositories
 element_android_repo: 'https://github.com/vector-im/element-android.git'
 fluffychat_repo: 'https://gitlab.com/famedly/fluffychat.git'

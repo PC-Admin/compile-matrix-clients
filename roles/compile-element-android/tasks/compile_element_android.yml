@@ -143,8 +143,11 @@
   become: yes
   become_user: developer
   shell:
-    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleGplayDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    cmd: ./gradlew assembleGplayDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
+  environment:
+    JAVA_HOME: '/usr/lib/jvm/java-11-openjdk-amd64'
+    ANDROID_SDK_ROOT: '/home/developer/android-sdk'
   async: 1800
   poll: 15
   when: ( build_mode is search("debug") ) and ( build_gplay | bool )
@@ -164,8 +167,11 @@
   become: yes
   become_user: developer
   shell:
-    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    cmd: ./gradlew assembleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
+  environment:
+    JAVA_HOME: '/usr/lib/jvm/java-11-openjdk-amd64'
+    ANDROID_SDK_ROOT: '/home/developer/android-sdk'
   async: 3600
   poll: 15
   when: ( build_mode is search("release") ) and ( build_gplay | bool )
@@ -185,8 +191,11 @@
   become: yes
   become_user: developer
   shell:
-    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleFdroidDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    cmd: ./gradlew assembleFdroidDebug -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
+  environment:
+    JAVA_HOME: '/usr/lib/jvm/java-11-openjdk-amd64'
+    ANDROID_SDK_ROOT: '/home/developer/android-sdk'
   async: 1800
   poll: 15
   when: ( build_mode is search("debug") ) and ( build_fdroid | bool )
@@ -206,8 +215,11 @@
   become: yes
   become_user: developer
   shell:
-    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew assembleFdroid -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    cmd: ./gradlew assembleFdroid -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
+  environment:
+    JAVA_HOME: '/usr/lib/jvm/java-11-openjdk-amd64'
+    ANDROID_SDK_ROOT: '/home/developer/android-sdk'
   async: 3600
   poll: 15
   when: ( build_mode is search("release") ) and ( build_fdroid | bool )
@@ -227,8 +239,11 @@
   become: yes
   become_user: developer
   shell:
-    cmd: ANDROID_SDK_ROOT=/home/developer/android-sdk ./gradlew bundleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
+    cmd: ./gradlew bundleGplay -Porg.gradle.jvmargs=-Xmx2g -Porg.gradle.parallel=false --stacktrace
     chdir: /home/developer/element-android/
+  environment:
+    JAVA_HOME: '/usr/lib/jvm/java-11-openjdk-amd64'
+    ANDROID_SDK_ROOT: '/home/developer/android-sdk'
   async: 3600
   poll: 15
   when: ( build_mode is search("bundle") ) and ( build_gplay | bool )
