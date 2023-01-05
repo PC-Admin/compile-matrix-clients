@@ -47,6 +47,7 @@
 - name: Replace keyAlias value in build.gradle
   delegate_to: '{{ server_ip_final }}'
   replace:
+    after: '        release {'
     path: '/home/developer/element-android/vector-app/build.gradle'
     regexp: '            keyAlias project.property\(\"signing.element.keyId\"\)$'
     replace: "            keyAlias '{{ private_keystore_alias }}'"
@@ -55,6 +56,7 @@
 - name: Replace keyPassword value in build.gradle
   delegate_to: '{{ server_ip_final }}'
   replace:
+    after: '        release {'
     path: '/home/developer/element-android/vector-app/build.gradle'
     regexp: '            keyPassword project.property\(\"signing.element.keyPassword\"\)$'
     replace: "            keyPassword '{{ private_keystore_password }}'"
@@ -63,6 +65,7 @@
 - name: Replace storeFile value in build.gradle
   delegate_to: '{{ server_ip_final }}'
   replace:
+    after: '        release {'
     path: '/home/developer/element-android/vector-app/build.gradle'
     regexp: '            storeFile file\(project.property\("signing.element.storePath"\)\)$'
     replace: "            storeFile file('./{{ private_keystore_file | basename }}')"
@@ -71,69 +74,37 @@
 - name: Replace storePassword value in build.gradle
   delegate_to: '{{ server_ip_final }}'
   replace:
+    after: '        release {'
     path: '/home/developer/element-android/vector-app/build.gradle'
     regexp: '            storePassword project.property\("signing.element.storePassword"\)$'
     replace: "            storePassword '{{ private_keystore_password }}'"
   when: sign_packages | bool
 
-- name: (Nightly) Copy Android signing key to compile machine
-  delegate_to: '{{ server_ip_final }}'
-  copy:
-    src: '{{ nightly_keystore_file }}'
-    dest: '/home/developer/element-android/vector-app/'
-    owner: developer
-    group: developer
-    mode: '0600'
-  when: sign_packages | bool
-
-- name: (Nightly) Replace keyAlias value in build.gradle
-  delegate_to: '{{ server_ip_final }}'
-  replace:
-    path: '/home/developer/element-android/vector-app/build.gradle'
-    regexp: '            keyAlias System.env.ELEMENT_ANDROID_NIGHTLY_KEYID \?\: project.property\(\"signing.element.nightly.keyId\"\)$'
-    replace: "            keyAlias '{{ nightly_keystore_alias }}'"
-  when: sign_packages | bool
-
-- name: (Nightly) Replace keyPassword value in build.gradle
-  delegate_to: '{{ server_ip_final }}'
-  replace:
-    path: '/home/developer/element-android/vector-app/build.gradle'
-    regexp: '            keyPassword System.env.ELEMENT_ANDROID_NIGHTLY_KEYPASSWORD \?\: project.property\(\"signing.element.nightly.keyPassword\"\)$'
-    replace: "            keyPassword '{{ nightly_keystore_password }}'"
-  when: sign_packages | bool
-
-- name: (Nightly) Replace storeFile value in build.gradle
-  delegate_to: '{{ server_ip_final }}'
-  replace:
-    path: '/home/developer/element-android/vector-app/build.gradle'
-    regexp: '            storeFile file\(''./signature/nightly.keystore''\)$'
-    replace: "            storeFile file('./{{ nightly_keystore_file | basename }}')"
-  when: sign_packages | bool
-
-- name: (Nightly) Replace storePassword value in build.gradle
-  delegate_to: '{{ server_ip_final }}'
-  replace:
-    path: '/home/developer/element-android/vector-app/build.gradle'
-    regexp: '            storePassword System.env.ELEMENT_ANDROID_NIGHTLY_STOREPASSWORD \?\: project.property\(\"signing.element.nightly.storePassword\"\)$'
-    replace: "            storePassword '{{ nightly_keystore_password }}'"
-  when: sign_packages | bool
-
 - name: Allow signing of release version in build.gradle
   delegate_to: '{{ server_ip_final }}'
-  replace:
-    path: '/home/developer/element-android/vector/build.gradle'
-    after: '        release {'
+  lineinfile:
+    path: '/home/developer/element-android/vector-app/build.gradle'
+    insertafter: '        release {'
     regexp: '            \/\/ signingConfig signingConfigs.release$'
-    replace: '            signingConfig signingConfigs.release'
+    line: '            signingConfig signingConfigs.release'
   when: sign_packages | bool
 
 - name: Disallow signing of debug version in build.gradle
   delegate_to: '{{ server_ip_final }}'
-  replace:
-    path: '/home/developer/element-android/vector/build.gradle'
-    before: '        release {'
+  lineinfile:
+    path: '/home/developer/element-android/vector-app/build.gradle'
+    insertafter: '        debug {'
     regexp: '            signingConfig signingConfigs.debug'
-    replace: '            // signingConfig signingConfigs.debug$'
+    line: '            // signingConfig signingConfigs.debug$'
+  when: sign_packages | bool
+
+- name: Disallow signing of nightly version in build.gradle
+  delegate_to: '{{ server_ip_final }}'
+  lineinfile:
+    path: '/home/developer/element-android/vector-app/build.gradle'
+    insertafter: '        debug {'
+    regexp: '            signingConfig signingConfigs.nightly'
+    line: '            // signingConfig signingConfigs.nightly$'
   when: sign_packages | bool
 
 - debug: msg="Time before compilation starts {{ ansible_date_time.time }}"

@@ -1,12 +1,4 @@
 
-# Compile Element Tool
-
-An auto-magic tool for compiling a white-labelled Element client.
-
-Can either create a DigitalOcean Droplet to compile the application on, or it can compile it on your own hardware.
-
-## License
-
 MIT License
 
 Copyright (c) 2023 Michael Collins
